@@ -115,15 +115,6 @@ jobs:
         git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
-    - name: Clone kernel tree
-        run: |
-          cd pbrp
-          git clone --depth=1 https://github.com/sm6150-motorola/android_kernel_motorola_sm6150.git -b lineage-18.1 kernel/motorola/odessa
-
-      - name: Clone vendor tree
-        run: |
-          git clone --depth=1 https://github.com/Frost444/proprietary_vendor_motorola.git -b qpr3 vendor/motorola/odessa
-
     - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
       with:
