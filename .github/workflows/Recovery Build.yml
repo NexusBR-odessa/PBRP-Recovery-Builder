@@ -35,6 +35,22 @@ on:
         description: 'BUILD_TARGET'
         required: true
         default: 'PLACEHOLDER'
+      kernel_link:
+        description: 'Kernel Tree URL'
+        required: false
+        default: ''
+      kernel_branch:
+        description: 'Kernel Branch'
+        required: false
+        default: ''
+      vendor_link:
+        description: 'Vendor Tree URL'
+        required: false
+        default: ''
+      vendor_branch:
+        description: 'Vendor Branch'
+        required: false
+        default: ''
       USER_NAME:
         description: 'Git Username'
         required: true
@@ -109,13 +125,32 @@ jobs:
       run: |
         repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
       working-directory: workspace
-      
-    - name: Clone device tree
-      run: |
-        git clone ${{ github.event.inputs.DEVICE_TREE_URL }} -b ${{ github.event.inputs.DEVICE_TREE_BRANCH }} ./${{ github.event.inputs.DEVICE_PATH }}
-      working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
-    - name: Set Swap Space
+      - name: Clone device tree
+        run: |
+          cd pbrp
+          git clone --depth=1 ${{ github.event.inputs.device_tree }} -b ${{ github.event.inputs.device_branch }} device/motorola/${{ github.event.inputs.device_codename }}
+
+      - name: Clone kernel tree (if provided)
+        if: ${{ github.event.inputs.kernel_link != '' }}
+        run: |
+          cd pbrp
+          git clone --depth=1 ${{ github.event.inputs.kernel_link }} -b ${{ github.event.inputs.kernel_branch }} kernel/motorola/${{ github.event.inputs.device_codename }}
+
+      - name: Clone vendor tree (if provided)
+        if: ${{ github.event.inputs.vendor_link != '' }}
+        run: |
+          cd pbrp
+          git clone --depth=1 ${{ github.event.inputs.vendor_link }} -b ${{ github.event.inputs.vendor_branch }} vendor/motorola/${{ github.event.inputs.device_codename }}
+
+      - name: Remove zopflipng from Android.mk to fix build error
+        run: |
+          cd pbrp
+          find . -type f -name "Android.mk" -exec sed -i '/zopflipng/d' {} +
+
+          path: pbrp/out/target/product/${{
+
+       - name: Set Swap Space
       uses: pierotofy/set-swap-space@master
       with:
         swap-size-gb: 12
