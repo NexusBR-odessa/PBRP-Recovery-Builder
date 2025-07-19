@@ -122,11 +122,6 @@ jobs:
 
     - name: Building recovery
       run: |
-        git clone https://github.com/google/zopfli.git
-        cd zopfli
-        make zopflipng
-        cp zopflipng /home/runner/work/PBRP-Recovery-Builder/PBRP-Recovery-Builder/workspace/out/host/linux-x86/bin/
-        cd
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
