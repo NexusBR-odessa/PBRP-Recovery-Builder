@@ -127,6 +127,13 @@ jobs:
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4 # Use a versão mais recente
+      with:
+        name: odessa-recovery-build
+        path: workspace/out/target/product/odessa/ # **Verifique se este é o caminho EXATO onde os arquivos são gerados**
+        retention-days: 365 
+
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
