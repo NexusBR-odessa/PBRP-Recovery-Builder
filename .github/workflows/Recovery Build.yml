@@ -108,6 +108,7 @@ jobs:
     - name: Repo Sync
       run: |
         repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+        sed -i 's/libfscrypttwrp/libfscrypt/g' system/core/fs_mgr/Android.bp
       working-directory: workspace
       
     - name: Clone device tree
